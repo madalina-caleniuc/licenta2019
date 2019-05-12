@@ -1,0 +1,197 @@
+SKI MASTER DATABASE
+
+1.
+CREATE TABLE CLIENTI	
+(
+id_client VARCHAR2(30) NOT NULL,
+nume_client VARCHAR2(30) NOT NULL, 
+data DATE,
+CONSTRAINT id_client_pk PRIMARY KEY(id_client)
+);
+
+CREATE SEQUENCE clienti_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER clienti_trigger 
+BEFORE INSERT ON CLIENTI 
+FOR EACH ROW
+
+BEGIN
+  SELECT carduri_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+2.
+CREATE TABLE CARDURI
+(
+id_card NUMBER NOT NULL,
+nr_puncte NUMBER, 
+id_client VARCHAR2(30),
+data DATE,
+CONSTRAINT id_card_pk PRIMARY KEY(id_card),
+CONSTRAINT id_client_fk FOREIGN KEY(id_client) REFERENCES CLIENTI(id_client)
+);
+
+CREATE SEQUENCE carduri_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER carduri_trigger 
+BEFORE INSERT ON CARDURI
+FOR EACH ROW
+
+BEGIN
+  SELECT carduri_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+3.
+
+CREATE ISTORIC_CARDURI
+(
+id_card NUMBER NOT NULL,
+nr_puncte_incarcate NUMBER, 
+data DATE,
+CONSTRAINT id_card_fk FOREIGN KEY(id_card) REFERENCES CARDURI(id_card)
+);
+
+CREATE SEQUENCE istoric_carduri_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER istoric_carduri_trigger 
+BEFORE INSERT ON ISTORIC_CARDURI 
+FOR EACH ROW
+
+BEGIN
+  SELECT istoric_carduri_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+
+4.
+
+CREATE BALANS_CARDURI
+(
+id_card NUMBER NOT NULL,
+nr_puncte_disponibile NUMBER, 
+CONSTRAINT id_card_fk FOREIGN KEY(id_card) REFERENCES CARDURI(id_card)
+);
+
+CREATE SEQUENCE balans_carduri_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER balans_carduri_trigger 
+BEFORE INSERT ON BALANS_CARDURI 
+FOR EACH ROW
+
+BEGIN
+  SELECT balans_carduri_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+
+5.
+
+CREATE ZONE
+(
+id_zona NUMBER NOT NULL,
+nume_zona VARCHAR2(30), 
+cost_zona NUMBER,
+CONSTRAINT id_zona_pk PRIMARY KEY(id_zona)
+);
+
+CREATE SEQUENCE zone_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER zone_trigger 
+BEFORE INSERT ON ZONE 
+FOR EACH ROW
+
+BEGIN
+  SELECT zone_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+
+
+
+6.
+
+
+CREATE ACTIVITATE_BARIERE
+(
+id_card NUMBER NOT NULL,
+id_zona NUMBER NOT NULL,
+data DATE,
+CONSTRAINT id_card_fk FOREIGN KEY(id_card) REFERENCES CARDURI(id_card)
+);
+
+CREATE SEQUENCE activitate_bariere_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER activitate_bariere_trigger 
+BEFORE INSERT ON ACTIVITATE_BARIERE
+FOR EACH ROW
+
+BEGIN
+  SELECT activitate_bariere_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+
+
+
+7.
+
+
+CREATE USERI_INTERNI
+(
+id_user NUMBER NULL,
+user_name VARCHAR2(30) NOT NULL,
+pass VARCHAR2(30),
+nume_user VARCHAR2(30),
+tip_user VARCHAR2(30),
+id_zona NUMBER NOT NULL,
+CONSTRAINT id_user_pk PRIMARY KEY(id_user),
+CONSTRAINT id_zona_fk FOREIGN KEY(id_zona) REFERENCES ZONE(id_zona)
+);
+
+CREATE SEQUENCE useri_interni_sequence start with 1;
+
+CREATE OR REPLACE TRIGGER useri_interni_trigger 
+BEFORE INSERT ON USERI_INTERNI
+FOR EACH ROW
+
+BEGIN
+  SELECT useri_interni_sequence.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;
+/
+
+
+
+CREATE TABLE BALANS_CARDURI
+(
+id_balans INT(11) NOT NULL,
+id_card INT(11),
+nr_puncte_disponibile INT(11), 
+CONSTRAINT id_balans_pk PRIMARY KEY(id_balans),
+CONSTRAINT id_card_fk FOREIGN KEY(id_card) REFERENCES CARDURI(id_card),
+CONSTRAINT nr_puncte_disponibile_fk FOREIGN KEY(nr_puncte_disponibile) REFERENCES CARDURI(nr_puncte_disponibile)
+);
+
+
+
+
+
+
